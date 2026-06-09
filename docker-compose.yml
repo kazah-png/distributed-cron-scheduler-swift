@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: vapor
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: cron_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  
+  app1:
+    build: .
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://vapor:password@db:5432/cron_db
+      NODE_ID: node-1
+    ports:
+      - "8081:8080"
+  
+  app2:
+    build: .
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://vapor:password@db:5432/cron_db
+      NODE_ID: node-2
+    ports:
+      - "8082:8080"
+
+volumes:
+  postgres_data:
